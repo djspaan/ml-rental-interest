@@ -21,9 +21,6 @@ class Collection:
     def first(self):
         return self.items[0]
 
-    def take(self, amount):
-        return Collection(self.items[0:amount])
-
     def map(self, callback):
         return {str(item): callback(item) for item in self.items}
 
@@ -37,6 +34,9 @@ class Collection:
 class ApartmentCollection(Collection):
     def __init__(self, items=None):
         Collection.__init__(self, items)
+
+    def take(self, amount):
+        return ApartmentCollection(self.items[0:amount])
 
     def where(self, key, value):
         items = [item for item in self.items if getattr(item, key) == value]

@@ -5,7 +5,6 @@ class JSONReader:
     def __init__(self, source_file):
         self.source_file = source_file
 
-    @staticmethod
-    def get_items():
-        items = open('data/train.json')
+    def get_items(self):
+        items = open(self.source_file)
         return json.load(items)
