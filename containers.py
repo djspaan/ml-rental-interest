@@ -35,6 +35,9 @@ class ApartmentCollection(Collection):
     def __init__(self, items=None):
         Collection.__init__(self, items)
 
+    def map(self, callback):
+        return [callback(apartment) for apartment in self.items]
+
     def take(self, amount):
         return ApartmentCollection(self.items[0:amount])
 

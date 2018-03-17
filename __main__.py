@@ -2,6 +2,7 @@ from readers import JSONReader
 from mappers import ApartmentMapper
 from repositories import ApartmentRepository
 from connectors import SQLite
+from algorithms import CARTDecisionTree
 
 
 class Main:
@@ -16,7 +17,25 @@ class Main:
         connection = SQLite('data/train.db')
         repository = ApartmentRepository(connection)
         apartments = repository.all()
-        print(apartments)
+        Main.tree(apartments)
+
+    @staticmethod
+    def tree(apartments):
+        """
+        Use a CART decision tree to evaluate the given apartments.
+        :param apartments:
+        """
+        dataset = apartments.map(
+            lambda a: [float(a.get_bathrooms()), float(a.get_bedrooms()), float(len(a.get_description())),
+                       float(a.get_price())])
+
+        tree = CARTDecisionTree(dataset[0:100])
+        n_folds = 5
+        max_depth = 5
+        min_size = 10
+        scores = tree.evaluate_algorithm(dataset, n_folds, max_depth, min_size)
+        print('Scores: %s' % scores)
+        print('Mean Accuracy: %.3f%%' % (sum(scores) / float(len(scores))))
 
     @staticmethod
     def map():

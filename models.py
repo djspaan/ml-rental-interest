@@ -19,6 +19,18 @@ class Apartment:
         self.street_address = street_address
         self.interest_level = interest_level
 
+    def get_bathrooms(self):
+        return self.bedrooms if self.bedrooms else 0
+
+    def get_bedrooms(self):
+        return self.bedrooms if self.bedrooms else 0
+
+    def get_description(self):
+        return self.description if self.description else ''
+
+    def get_price(self):
+        return self.price if self.price else 0
+
     def __str__(self):
         limited = {key: str(value)[:20] for key, value in self.__dict__.items()}
         return str(limited)
