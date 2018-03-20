@@ -1,3 +1,6 @@
+import ast
+
+
 class Apartment:
     def __init__(self, uid, bathrooms=None, bedrooms=None, building_id=None, created=None, description=None,
                  features=None, display_address=None, latitude=None, listing_id=None, longitude=None, manager_id=None,
@@ -30,6 +33,12 @@ class Apartment:
 
     def get_price(self):
         return self.price if self.price else 0
+
+    def get_features(self):
+        return ast.literal_eval(self.features)
+
+    def get_photos(self):
+        return ast.literal_eval(self.photos)
 
     def __str__(self):
         limited = {key: str(value)[:20] for key, value in self.__dict__.items()}

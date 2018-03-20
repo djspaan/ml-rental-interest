@@ -2,7 +2,7 @@ from readers import JSONReader
 from mappers import ApartmentMapper
 from repositories import ApartmentRepository
 from connectors import SQLite
-from algorithms import CARTDecisionTree
+from algorithms import *
 
 
 class Main:
@@ -27,15 +27,14 @@ class Main:
         """
         dataset = apartments.map(
             lambda a: [float(a.get_bathrooms()), float(a.get_bedrooms()), float(len(a.get_description())),
-                       float(a.get_price())])
+                       float(a.get_price()), float(len(a.get_features())), a.interest_level])[:1000]
 
-        tree = CARTDecisionTree(dataset[0:100])
         n_folds = 5
         max_depth = 5
         min_size = 10
-        scores = tree.evaluate_algorithm(dataset, n_folds, max_depth, min_size)
+        scores = evaluate_algorithm(dataset, decision_tree, n_folds, max_depth, min_size)
         print('Scores: %s' % scores)
-        print('Mean Accuracy: %.3f%%' % (sum(scores) / float(len(scores))))
+        print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
 
     @staticmethod
     def map():
