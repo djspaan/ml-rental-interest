@@ -3,6 +3,7 @@ from random import seed
 from random import randrange
 from csv import reader
 
+
 # Load a CSV file
 def load_csv(filename):
     file = open(filename, "rb")
@@ -10,10 +11,12 @@ def load_csv(filename):
     dataset = list(lines)
     return dataset
 
+
 # Convert string column to float
 def str_column_to_float(dataset, column):
     for row in dataset:
         row[column] = float(row[column].strip())
+
 
 # Split a dataset into k folds
 def cross_validation_split(dataset, n_folds):
@@ -28,6 +31,7 @@ def cross_validation_split(dataset, n_folds):
         dataset_split.append(fold)
     return dataset_split
 
+
 # Calculate accuracy percentage
 def accuracy_metric(actual, predicted):
     correct = 0
@@ -35,6 +39,7 @@ def accuracy_metric(actual, predicted):
         if actual[i] == predicted[i]:
             correct += 1
     return correct / float(len(actual)) * 100.0
+
 
 # Evaluate an algorithm using a cross validation split
 def evaluate_algorithm(dataset, algorithm, n_folds, *args):
@@ -55,6 +60,7 @@ def evaluate_algorithm(dataset, algorithm, n_folds, *args):
         scores.append(accuracy)
     return scores
 
+
 # Split a dataset based on an attribute and an attribute value
 def test_split(index, value, dataset):
     left, right = list(), list()
@@ -64,6 +70,7 @@ def test_split(index, value, dataset):
         else:
             right.append(row)
     return left, right
+
 
 # Calculate the Gini index for a split dataset
 def gini_index(groups, classes):
@@ -85,27 +92,30 @@ def gini_index(groups, classes):
         gini += (1.0 - score) * (size / n_instances)
     return gini
 
+
 # Select the best split point for a dataset
 def get_split(dataset):
     class_values = list(set(row[-1] for row in dataset))
     b_index, b_value, b_score, b_groups = 999, 999, 999, None
-    for index in range(len(dataset[0])-1):
+    for index in range(len(dataset[0]) - 1):
         for row in dataset:
             groups = test_split(index, row[index], dataset)
             gini = gini_index(groups, class_values)
             if gini < b_score:
                 b_index, b_value, b_score, b_groups = index, row[index], gini, groups
-    return {'index':b_index, 'value':b_value, 'groups':b_groups}
+    return {'index': b_index, 'value': b_value, 'groups': b_groups}
+
 
 # Create a terminal node value
 def to_terminal(group):
     outcomes = [row[-1] for row in group]
     return max(set(outcomes), key=outcomes.count)
 
+
 # Create child splits for a node or make terminal
 def split(node, max_depth, min_size, depth):
     left, right = node['groups']
-    del(node['groups'])
+    del (node['groups'])
     # check for a no split
     if not left or not right:
         node['left'] = node['right'] = to_terminal(left + right)
@@ -119,19 +129,21 @@ def split(node, max_depth, min_size, depth):
         node['left'] = to_terminal(left)
     else:
         node['left'] = get_split(left)
-        split(node['left'], max_depth, min_size, depth+1)
+        split(node['left'], max_depth, min_size, depth + 1)
     # process right child
     if len(right) <= min_size:
         node['right'] = to_terminal(right)
     else:
         node['right'] = get_split(right)
-        split(node['right'], max_depth, min_size, depth+1)
+        split(node['right'], max_depth, min_size, depth + 1)
+
 
 # Build a decision tree
 def build_tree(train, max_depth, min_size):
     root = get_split(train)
     split(root, max_depth, min_size, 1)
     return root
+
 
 # Make a prediction with a decision tree
 def predict(node, row):
@@ -146,6 +158,7 @@ def predict(node, row):
         else:
             return node['right']
 
+
 # Classification and Regression Tree Algorithm
 def decision_tree(train, test, max_depth, min_size):
     tree = build_tree(train, max_depth, min_size)
@@ -153,4 +166,4 @@ def decision_tree(train, test, max_depth, min_size):
     for row in test:
         prediction = predict(tree, row)
         predictions.append(prediction)
-    return(predictions)
+    return (predictions)

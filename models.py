@@ -1,4 +1,6 @@
 import ast
+from dateutil import parser
+import calendar
 
 
 class Apartment:
@@ -27,6 +29,16 @@ class Apartment:
 
     def get_bedrooms(self):
         return self.bedrooms if self.bedrooms else 0
+
+    def get_created(self):
+        created = parser.parse(self.created)
+        return calendar.timegm(created.timetuple())
+
+    def get_latitude(self):
+        return self.latitude or 40
+
+    def get_longitude(self):
+        return self.longitude or 40
 
     def get_description(self):
         return self.description if self.description else ''

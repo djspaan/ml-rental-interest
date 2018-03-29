@@ -3,6 +3,8 @@ from mappers import ApartmentMapper
 from repositories import ApartmentRepository
 from connectors import SQLite
 from algorithms import *
+from random import shuffle
+from containers import ApartmentCollection
 
 
 class Main:
@@ -25,16 +27,37 @@ class Main:
         Use a CART decision tree to evaluate the given apartments.
         :param apartments:
         """
+        low = apartments.where('interest_level', 'low').take(3839)
+
+        medium = apartments.where('interest_level', 'medium').take(3839)
+
+        high = apartments.where('interest_level', 'high').take(3839)
+
+        apartments = ApartmentCollection(low.items + medium.items + high.items)
+
         dataset = apartments.map(
-            lambda a: [float(a.get_bathrooms()), float(a.get_bedrooms()), float(len(a.get_description())),
-                       float(a.get_price()), float(len(a.get_features())), a.interest_level])[:1000]
+            lambda a: [float(a.get_bathrooms()),
+                       float(a.get_bedrooms()),
+                       float(a.get_created()),
+                       float(len(a.get_description())),
+                       float(a.get_price()),
+                       float(len(a.get_features())),
+                       float(a.get_latitude()),
+                       float(a.get_longitude()),
+                       a.interest_level])
+
+        shuffle(dataset)
+
+        print(len(dataset))
 
         n_folds = 5
-        max_depth = 5
+        max_depth = 8
         min_size = 10
+
+        print('Max depth ' + str(max_depth))
         scores = evaluate_algorithm(dataset, decision_tree, n_folds, max_depth, min_size)
         print('Scores: %s' % scores)
-        print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
+        print('Mean Accuracy: %.3f%%' % (sum(scores) / float(len(scores))))
 
     @staticmethod
     def map():
